@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "60618385451",
+    "project_id": "learn-firebase-4368c",
+    "storage_bucket": "learn-firebase-4368c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60618385451:android:46c6ed98940c732000a26e",
+        "android_client_info": {
+          "package_name": "tung.lab.firebaseloginemail"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "60618385451-uoqn43cgudij0ngq290rj6qqsi0a4kcj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tung.lab.firebaseloginemail",
+            "certificate_hash": "603946cbad8264a4c9d7d11167a5b205a0b43895"
+          }
+        },
+        {
+          "client_id": "60618385451-7eq7vb8tosbhrvn59pcp3irgjabet1m0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmGOBtK5k4UtRMRRsaWurZgL63zzd0Z6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "60618385451-7eq7vb8tosbhrvn59pcp3irgjabet1m0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
