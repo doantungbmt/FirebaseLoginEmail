@@ -24,7 +24,6 @@ import tung.lab.firebaseloginemail.databinding.ActivityControlDeviceBinding
 import java.util.*
 
 class ControlDeviceActivity : BaseActivity() {
-
     lateinit var subscription: Disposable
 
     lateinit var binding: ActivityControlDeviceBinding
@@ -51,9 +50,120 @@ class ControlDeviceActivity : BaseActivity() {
     }
 
     fun clickButton(){
+        binding.btnGetTime.setOnClickListener {
+            sendValue(BleSDK.GetDeviceTime())
+        }
+        binding.btnGetBattery.setOnClickListener {
+            sendValue(BleSDK.GetDeviceBatteryLevel())
+        }
+        binding.btnSyncTime.setOnClickListener {
+            sendValue(BleSDK.SetDeviceTime(MyDeviceTime(Calendar.getInstance())))
+        }
+        binding.btnGetVersion.setOnClickListener {
+            sendValue(BleSDK.GetDeviceVersion())
+        }
+        binding.btnGetMac.setOnClickListener {
+            sendValue(BleSDK.GetDeviceMacAddress())
+        }
+
+        binding.btnSkipTotalData.setOnClickListener {
+            sendValue(BleSDK.GetDetailSkipData(0.toByte()))
+            binding.txtLog.text = ""
+        }
+        binding.btnStartSkip.setOnClickListener {
+            var mode: Int
+            var second: Int
+            var count: Int
+            if (binding.rbFreeMode.isChecked) {
+                mode = 0x1
+                second = 0
+                count = 0
+                sendValue(BleSDK.StartSkip(mode, second, count))
+            } else if (binding.rbTimeCountdown.isChecked) {
+                mode = 0x02
+                count = 0
+                if (binding.edtSecond.text.trim().length == 0) {
+                    Toast.makeText(this@ControlDeviceActivity, "Input time", Toast.LENGTH_SHORT).show()
+                } else {
+                    second = Integer.parseInt(binding.edtSecond.text.toString())
+                    sendValue(BleSDK.StartSkip(mode, second, count))
+                }
+            } else if (binding.rbSkipCountdown.isChecked) {
+                mode = 0x03
+                second = 0
+                if (binding.edtSkip.text.trim().length == 0) {
+                    Toast.makeText(this@ControlDeviceActivity, "Input Skip", Toast.LENGTH_SHORT).show()
+                } else {
+                    count = (Integer.parseInt(binding.edtSkip.text.trim().toString()))/100
+                    sendValue(BleSDK.StartSkip(mode, second, count))
+                }
+            }
+
+        }
+        binding.btnStopSkip.setOnClickListener {
+            sendValue(BleSDK.StartSkip(0x99, 0, 0))
+        }
         binding.btnDisconnect.setOnClickListener {
             BleManager.getInstance().disconnectDevice()
             finish()
+        }
+    }
+
+    override fun dataCallback(maps: MutableMap<String, Any>) {
+        super.dataCallback(maps)
+        var dataType = getDataType(maps)
+        var data: Map<*, *>? = getData(maps)
+        when (dataType) {
+            ReceiveConst.GetDeviceTime -> {
+                showDialogInfo(maps.toString())
+            }
+            ReceiveConst.GetDeviceMacAddress -> {
+                var mac = data?.get(ParamKey.MacAddress)
+                showDialogInfo(mac as String?)
+            }
+            ReceiveConst.GetDeviceVersion -> {
+                var version = data?.get(ParamKey.DeviceVersion)
+                showDialogInfo(version as String?)
+            }
+            ReceiveConst.GetDeviceBatteryLevel -> {
+                var batt = data?.get(ParamKey.BatteryLevel)
+                showDialogInfo(batt as String?)
+            }
+            ReceiveConst.GetTotalSkipData -> {
+                if (maps.containsKey(ParamKey.End)) {
+                    binding.txtLog.append("\nEnd")
+                } else {
+                    var date = maps.get(ParamKey.Date).toString()
+                    var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
+                    var skipCount = maps.get(ParamKey.SkipCount).toString()
+                    binding.txtLog.append("\n $date === durationTime: $durationTime, skipCount: $skipCount")
+                }
+            }
+            ReceiveConst.StartSkip -> {
+                if (maps.containsKey(ParamKey.End)) {
+                    binding.txtLog.append("\n End")
+                } else {
+                    var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
+                    var skipCount = maps.get(ParamKey.SkipCount).toString()
+                    var todayDurationTime = maps.get(ParamKey.TodaySkipDurationTime).toString()
+                    var todaySkipCount = maps.get(ParamKey.TodaySkipCount).toString()
+                    var mode = maps.get(ParamKey.Mode).toString()
+                    var strMode = ""
+                    when (mode) {
+                        "1" -> strMode = "Free mode"
+                        "2" -> strMode = "Time countdown mode"
+                        "3" -> strMode = "Skipping countdown mode"
+                    }
+                    if (mode.toInt() > 0x30) {
+
+                    } else {
+                        binding.txtLog.text = "\n Mode: $strMode \n durationTime: $durationTime \n" +
+                                " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
+                                " todaySkipCount: $todaySkipCount"
+                    }
+                }
+            }
+
         }
     }
 
