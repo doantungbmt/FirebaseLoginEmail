@@ -3,7 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="tung.lab.firebaseloginemail">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,12 +23,18 @@
         android:theme="@style/Theme.FirebaseLoginEmail"
         tools:targetApi="31">
         <activity
+            android:name=".ControlDeviceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ScanDevice"
+            android:exported="false" />
+        <activity
             android:name=".UserProfile"
             android:exported="false" />
         <activity
             android:name=".ui.Login.SignUp"
             android:exported="false"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.Login.SignIn"
             android:exported="true">
@@ -29,6 +44,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".ble.BleService" />
     </application>
 
 </manifest>

@@ -1,12 +1,17 @@
 package tung.lab.firebaseloginemail.ui.Login
 
+import android.Manifest
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.CompoundButton
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
+import tung.lab.firebaseloginemail.ScanDevice
 import tung.lab.firebaseloginemail.UserProfile
 
 import tung.lab.firebaseloginemail.base.BaseActivity
@@ -24,6 +29,7 @@ class SignIn : BaseActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        askPermission()
         rememberMe()
         binding.btnSignUp.setOnClickListener {
             intentToActivity(this@SignIn, SignUp::class.java)
@@ -44,7 +50,7 @@ class SignIn : BaseActivity() {
         super.onStart()
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            intent = Intent(this@SignIn, UserProfile::class.java)
+            intent = Intent(this@SignIn, ScanDevice::class.java)
             startActivity(intent)
             Toast.makeText(this@SignIn, "Say Hi!", Toast.LENGTH_SHORT).show()
             finish()
@@ -61,7 +67,7 @@ class SignIn : BaseActivity() {
                     val user = auth.currentUser
                     Toast.makeText(this@SignIn, "Sign In successful", Toast.LENGTH_SHORT)
                         .show()
-                    intent = Intent(this@SignIn, UserProfile::class.java)
+                    intent = Intent(this@SignIn, ScanDevice::class.java)
                     startActivity(intent)
                     Toast.makeText(this@SignIn, "Say Hi!", Toast.LENGTH_SHORT).show()
                     finish()
@@ -74,8 +80,6 @@ class SignIn : BaseActivity() {
                         baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    intent = Intent(this@SignIn, UserProfile::class.java)
-                    startActivity(intent)
 //                    updateUI(null)
                 }
             }
@@ -128,6 +132,41 @@ class SignIn : BaseActivity() {
         super.onResume()
         binding.edtEmail.setText(sharedPreferences.getString("email",null))
         binding.edtPassWord.setText(sharedPreferences.getString("password",null))
+    }
+
+
+
+    private fun askPermission() {
+        val permissionlistener: PermissionListener = object : PermissionListener {
+            override fun onPermissionGranted() {
+                Toast.makeText(this@SignIn, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: List<String>) {
+                Toast.makeText(
+                    this@SignIn,
+                    "Permission Denied\n$deniedPermissions",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(
+                    Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_ADVERTISE)
+                .check();
+        } else {
+            TedPermission.create()
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.BLUETOOTH, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .check();
+        }
+
     }
 
 }

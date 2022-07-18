@@ -10,9 +10,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.jstyle.blesdk1963.callback.DataListener2023
 
 
-abstract class BaseActivity : AppCompatActivity() {
+
+abstract class BaseActivity : AppCompatActivity(), DataListener2023 {
+
     val db = Firebase.firestore
 
     val user = Firebase.auth.currentUser
@@ -24,8 +27,8 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
-    }
 
+    }
 
     protected open fun showToast(text: String?) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
@@ -35,5 +38,12 @@ abstract class BaseActivity : AppCompatActivity() {
         startActivity(Intent(context, cl))
     }
 
+    override fun dataCallback(p0: MutableMap<String, Any>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun dataCallback(p0: ByteArray?) {
+        TODO("Not yet implemented")
+    }
 
 }
