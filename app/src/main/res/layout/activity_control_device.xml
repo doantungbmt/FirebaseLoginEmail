@@ -173,6 +173,7 @@
             android:text="Stop Skip"
             android:textAllCaps="false"
             android:textSize="12dp" />
+
     </LinearLayout>
 
     <ScrollView

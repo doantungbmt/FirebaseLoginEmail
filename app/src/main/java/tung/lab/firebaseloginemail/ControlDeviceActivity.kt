@@ -1,13 +1,12 @@
 package tung.lab.firebaseloginemail
 
 import android.app.ProgressDialog
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.google.common.collect.Maps
+import com.google.firebase.Timestamp
 import com.jstyle.blesdk1963.Util.BleSDK
 import com.jstyle.blesdk1963.constant.ParamKey
 import com.jstyle.blesdk1963.constant.ReceiveConst
@@ -17,6 +16,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import tung.lab.firebaseloginemail.Utils.BleData
 import tung.lab.firebaseloginemail.Utils.RxBus
+import tung.lab.firebaseloginemail.Utils.extensions.toCalendar
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.ble.BleManager
 import tung.lab.firebaseloginemail.ble.BleService
@@ -40,6 +40,7 @@ class ControlDeviceActivity : BaseActivity() {
                     val action = bleData.action
                     if (action == BleService.ACTION_GATT_onDescriptorWrite) {
                         progressDialog!!.dismiss()
+                        addDeviceToFireStore()
                     } else if (action == BleService.ACTION_GATT_DISCONNECTED) {
                         progressDialog!!.dismiss()
                     }
@@ -49,7 +50,7 @@ class ControlDeviceActivity : BaseActivity() {
         clickButton()
     }
 
-    fun clickButton(){
+    fun clickButton() {
         binding.btnGetTime.setOnClickListener {
             sendValue(BleSDK.GetDeviceTime())
         }
@@ -70,6 +71,7 @@ class ControlDeviceActivity : BaseActivity() {
             sendValue(BleSDK.GetDetailSkipData(0.toByte()))
             binding.txtLog.text = ""
         }
+
         binding.btnStartSkip.setOnClickListener {
             var mode: Int
             var second: Int
@@ -83,7 +85,8 @@ class ControlDeviceActivity : BaseActivity() {
                 mode = 0x02
                 count = 0
                 if (binding.edtSecond.text.trim().length == 0) {
-                    Toast.makeText(this@ControlDeviceActivity, "Input time", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ControlDeviceActivity, "Input time", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     second = Integer.parseInt(binding.edtSecond.text.toString())
                     sendValue(BleSDK.StartSkip(mode, second, count))
@@ -92,9 +95,10 @@ class ControlDeviceActivity : BaseActivity() {
                 mode = 0x03
                 second = 0
                 if (binding.edtSkip.text.trim().length == 0) {
-                    Toast.makeText(this@ControlDeviceActivity, "Input Skip", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ControlDeviceActivity, "Input Skip", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
-                    count = (Integer.parseInt(binding.edtSkip.text.trim().toString()))/100
+                    count = (Integer.parseInt(binding.edtSkip.text.trim().toString())) / 100
                     sendValue(BleSDK.StartSkip(mode, second, count))
                 }
             }
@@ -134,8 +138,12 @@ class ControlDeviceActivity : BaseActivity() {
                     binding.txtLog.append("\nEnd")
                 } else {
                     var date = maps.get(ParamKey.Date).toString()
+                    var dateTimestamp = date.toCalendar("yyyy.MM.dd")?.time?.let { d ->
+                        Timestamp(d)
+                    }
                     var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
                     var skipCount = maps.get(ParamKey.SkipCount).toString()
+                    addDataToFireStore(dateTimestamp?.seconds.toString(), durationTime, skipCount, date)
                     binding.txtLog.append("\n $date === durationTime: $durationTime, skipCount: $skipCount")
                 }
             }
@@ -155,11 +163,12 @@ class ControlDeviceActivity : BaseActivity() {
                         "3" -> strMode = "Skipping countdown mode"
                     }
                     if (mode.toInt() > 0x30) {
-
+                        Log.d(TAG, "dataCallback: ????")
                     } else {
-                        binding.txtLog.text = "\n Mode: $strMode \n durationTime: $durationTime \n" +
-                                " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
-                                " todaySkipCount: $todaySkipCount"
+                        binding.txtLog.text =
+                            "\n Mode: $strMode \n durationTime: $durationTime \n" +
+                                    " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
+                                    " todaySkipCount: $todaySkipCount"
                     }
                 }
             }
@@ -186,6 +195,45 @@ class ControlDeviceActivity : BaseActivity() {
         }
     }
 
+    fun addDeviceToFireStore() {
+        val dataTotalSkip = HashMap<String, Any>()
+
+        if (uid != null) {
+            db.collection("users").document(uid)
+                .collection("devices").document(address)
+                .set(dataTotalSkip)
+        }
+
+        val city = hashMapOf(
+            "name" to "Los Angeles",
+            "state" to "CA",
+            "country" to "USA"
+        )
+
+        db.collection("cities").document("LA")
+            .set(city)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+    }
+
+
+    fun addDataToFireStore(dateTimestamp: String?, durationTime : String?, skipCount : String?, date : String?) {
+        val dataTotalSkip = hashMapOf(
+            "durationTime" to durationTime,
+            "skipCount" to skipCount,
+            "date" to date
+        )
+
+        if (uid != null && dateTimestamp != null) {
+            db.collection("users").document(uid)
+                .collection("devices").document(address).collection("totalSkipData")
+                .document(dateTimestamp)
+                .set(dataTotalSkip)
+        }
+    }
+
+
+
     lateinit var address: String
     private fun connectDevice() {
         address = intent?.getStringExtra("macAddress")!!
@@ -201,7 +249,7 @@ class ControlDeviceActivity : BaseActivity() {
 
     private fun showConnectDialog() {
         progressDialog = ProgressDialog(this)
-        progressDialog!!.setMessage(getString(R.string.connectting) +" $address")
+        progressDialog!!.setMessage(getString(R.string.connectting) + " $address")
         if (!progressDialog!!.isShowing) progressDialog!!.show()
     }
 
