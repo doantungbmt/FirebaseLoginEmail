@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.View
 import android.widget.SimpleAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,7 +28,7 @@ import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityScanDeviceBinding
 import tung.lab.firebaseloginemail.ui.Login.SignIn
 import java.util.HashMap
-
+@RequiresApi(Build.VERSION_CODES.O)
 private const val BLUETOOTH_SCAN_PERMISSION = 1
 private const val BLUETOOTH_CONNECT_PERMISSION = 2
 private const val REQUEST_PERMISSION_LOCATION = 3
@@ -173,6 +174,8 @@ class ScanDevice : AppCompatActivity() {
         }
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initView() {
         binding.btnScan.setOnClickListener {
             discoveryBtDevices()
@@ -210,7 +213,8 @@ class ScanDevice : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this@ScanDevice, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this@ScanDevice, arrayOf(permission), requestCode)
         } else {
-            Toast.makeText(this@ScanDevice, "Permission already granted", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "Permission already granted")
+//            Toast.makeText(this@ScanDevice, "Permission already granted", Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -1,11 +1,14 @@
 package tung.lab.firebaseloginemail
 
 import android.app.ProgressDialog
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.firebase.Timestamp
 import com.jstyle.blesdk1963.Util.BleSDK
 import com.jstyle.blesdk1963.constant.ParamKey
@@ -21,8 +24,11 @@ import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.ble.BleManager
 import tung.lab.firebaseloginemail.ble.BleService
 import tung.lab.firebaseloginemail.databinding.ActivityControlDeviceBinding
+import tung.lab.firebaseloginemail.ui.ControlDevice.FreeModeActivity
+import tung.lab.firebaseloginemail.ui.ControlDevice.SkippingCountdownModeActivity
+import tung.lab.firebaseloginemail.ui.ControlDevice.TimeCountDownModeActivity
 import java.util.*
-
+@RequiresApi(Build.VERSION_CODES.O)
 class ControlDeviceActivity : BaseActivity() {
     lateinit var subscription: Disposable
 
@@ -77,6 +83,9 @@ class ControlDeviceActivity : BaseActivity() {
             var second: Int
             var count: Int
             if (binding.rbFreeMode.isChecked) {
+                var intent = Intent(this@ControlDeviceActivity, FreeModeActivity::class.java)
+                intent.putExtra("address", address)
+                startActivity(intent)
                 mode = 0x1
                 second = 0
                 count = 0
@@ -90,8 +99,18 @@ class ControlDeviceActivity : BaseActivity() {
                 } else {
                     second = Integer.parseInt(binding.edtSecond.text.toString())
                     sendValue(BleSDK.StartSkip(mode, second, count))
+                    var intent = Intent(this@ControlDeviceActivity, TimeCountDownModeActivity::class.java)
+                    intent.putExtra("time", binding.edtSecond.text.trim().toString())
+                    intent.putExtra("address", address)
+                    startActivity(intent)
                 }
+
+
             } else if (binding.rbSkipCountdown.isChecked) {
+                var intent = Intent(this@ControlDeviceActivity, SkippingCountdownModeActivity::class.java)
+                intent.putExtra("skip", binding.edtSkip.text.trim().toString())
+                intent.putExtra("address", address)
+                startActivity(intent)
                 mode = 0x03
                 second = 0
                 if (binding.edtSkip.text.trim().length == 0) {
@@ -102,7 +121,6 @@ class ControlDeviceActivity : BaseActivity() {
                     sendValue(BleSDK.StartSkip(mode, second, count))
                 }
             }
-
         }
         binding.btnStopSkip.setOnClickListener {
             sendValue(BleSDK.StartSkip(0x99, 0, 0))
@@ -143,35 +161,35 @@ class ControlDeviceActivity : BaseActivity() {
                     }
                     var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
                     var skipCount = maps.get(ParamKey.SkipCount).toString()
-                    addDataToFireStore(dateTimestamp?.seconds.toString(), durationTime, skipCount, date)
+                    addDataToFireStore(dateTimestamp?.seconds.toString(), durationTime, skipCount, date, "totalSkipData")
                     binding.txtLog.append("\n $date === durationTime: $durationTime, skipCount: $skipCount")
                 }
             }
-            ReceiveConst.StartSkip -> {
-                if (maps.containsKey(ParamKey.End)) {
-                    binding.txtLog.append("\n End")
-                } else {
-                    var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
-                    var skipCount = maps.get(ParamKey.SkipCount).toString()
-                    var todayDurationTime = maps.get(ParamKey.TodaySkipDurationTime).toString()
-                    var todaySkipCount = maps.get(ParamKey.TodaySkipCount).toString()
-                    var mode = maps.get(ParamKey.Mode).toString()
-                    var strMode = ""
-                    when (mode) {
-                        "1" -> strMode = "Free mode"
-                        "2" -> strMode = "Time countdown mode"
-                        "3" -> strMode = "Skipping countdown mode"
-                    }
-                    if (mode.toInt() > 0x30) {
-                        Log.d(TAG, "dataCallback: ????")
-                    } else {
-                        binding.txtLog.text =
-                            "\n Mode: $strMode \n durationTime: $durationTime \n" +
-                                    " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
-                                    " todaySkipCount: $todaySkipCount"
-                    }
-                }
-            }
+//            ReceiveConst.StartSkip -> {
+//                if (maps.containsKey(ParamKey.End)) {
+//                    binding.txtLog.append("\n End")
+//                } else {
+//                    var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
+//                    var skipCount = maps.get(ParamKey.SkipCount).toString()
+//                    var todayDurationTime = maps.get(ParamKey.TodaySkipDurationTime).toString()
+//                    var todaySkipCount = maps.get(ParamKey.TodaySkipCount).toString()
+//                    var mode = maps.get(ParamKey.Mode).toString()
+//                    var strMode = ""
+//                    when (mode) {
+//                        "1" -> strMode = "Free mode"
+//                        "2" -> strMode = "Time countdown mode"
+//                        "3" -> strMode = "Skipping countdown mode"
+//                    }
+//                    if (mode.toInt() > 0x30) {
+//                        //Log.d(TAG, "dataCallback: ????")
+//                    } else {
+//                        binding.txtLog.text =
+//                            "\n Mode: $strMode \n durationTime: $durationTime \n" +
+//                                    " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
+//                                    " todaySkipCount: $todaySkipCount"
+//                    }
+//                }
+//            }
 
         }
     }
@@ -217,7 +235,9 @@ class ControlDeviceActivity : BaseActivity() {
     }
 
 
-    fun addDataToFireStore(dateTimestamp: String?, durationTime : String?, skipCount : String?, date : String?) {
+    fun addDataToFireStore(dateTimestamp: String?, durationTime : String?,
+                           skipCount : String?, date : String?,
+                            typeData : String) {
         val dataTotalSkip = hashMapOf(
             "durationTime" to durationTime,
             "skipCount" to skipCount,
@@ -226,7 +246,7 @@ class ControlDeviceActivity : BaseActivity() {
 
         if (uid != null && dateTimestamp != null) {
             db.collection("users").document(uid)
-                .collection("devices").document(address).collection("totalSkipData")
+                .collection("devices").document(address).collection(typeData)
                 .document(dateTimestamp)
                 .set(dataTotalSkip)
         }

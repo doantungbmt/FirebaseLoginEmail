@@ -4,11 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/activity_control_device.xml" value="0.3016304347826087" />
+        <entry key="app/src/main/res/layout/activity_count_down_mode.xml" value="0.32760416666666664" />
+        <entry key="app/src/main/res/layout/activity_free_mode.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/activity_scan.xml" value="0.32155797101449274" />
         <entry key="app/src/main/res/layout/activity_scan_device.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.32708333333333334" />
+        <entry key="app/src/main/res/layout/activity_skipping_countdown_mode.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.2" />
       </map>
     </option>

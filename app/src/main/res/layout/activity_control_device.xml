@@ -164,6 +164,7 @@
             android:textSize="12dp" />
 
         <Button
+            android:visibility="gone"
             android:textColor="@color/white"
             android:id="@+id/btnStopSkip"
             android:layout_width="match_parent"
