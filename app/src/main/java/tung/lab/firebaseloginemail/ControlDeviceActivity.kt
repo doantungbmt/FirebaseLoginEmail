@@ -27,6 +27,7 @@ import tung.lab.firebaseloginemail.databinding.ActivityControlDeviceBinding
 import tung.lab.firebaseloginemail.ui.ControlDevice.FreeModeActivity
 import tung.lab.firebaseloginemail.ui.ControlDevice.SkippingCountdownModeActivity
 import tung.lab.firebaseloginemail.ui.ControlDevice.TimeCountDownModeActivity
+import java.text.SimpleDateFormat
 import java.util.*
 @RequiresApi(Build.VERSION_CODES.O)
 class ControlDeviceActivity : BaseActivity() {
@@ -76,6 +77,11 @@ class ControlDeviceActivity : BaseActivity() {
         binding.btnSkipTotalData.setOnClickListener {
             sendValue(BleSDK.GetDetailSkipData(0.toByte()))
             binding.txtLog.text = ""
+        }
+
+        binding.btnSkipDetail.setOnClickListener {
+            binding.txtLog.text = ""
+            getSkipDetailFrFireStore()
         }
 
         binding.btnStartSkip.setOnClickListener {
@@ -165,31 +171,38 @@ class ControlDeviceActivity : BaseActivity() {
                     binding.txtLog.append("\n $date === durationTime: $durationTime, skipCount: $skipCount")
                 }
             }
-//            ReceiveConst.StartSkip -> {
-//                if (maps.containsKey(ParamKey.End)) {
-//                    binding.txtLog.append("\n End")
-//                } else {
-//                    var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
-//                    var skipCount = maps.get(ParamKey.SkipCount).toString()
-//                    var todayDurationTime = maps.get(ParamKey.TodaySkipDurationTime).toString()
-//                    var todaySkipCount = maps.get(ParamKey.TodaySkipCount).toString()
-//                    var mode = maps.get(ParamKey.Mode).toString()
-//                    var strMode = ""
-//                    when (mode) {
-//                        "1" -> strMode = "Free mode"
-//                        "2" -> strMode = "Time countdown mode"
-//                        "3" -> strMode = "Skipping countdown mode"
-//                    }
-//                    if (mode.toInt() > 0x30) {
-//                        //Log.d(TAG, "dataCallback: ????")
-//                    } else {
-//                        binding.txtLog.text =
-//                            "\n Mode: $strMode \n durationTime: $durationTime \n" +
-//                                    " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
-//                                    " todaySkipCount: $todaySkipCount"
-//                    }
-//                }
-//            }
+            ReceiveConst.StartSkip -> {
+                if (maps.containsKey(ParamKey.End)) {
+                    binding.txtLog.append("\n End")
+                    sendValue(BleSDK.GetDetailSkipData(0.toByte()))
+                } else {
+                    var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
+                    var skipCount = maps.get(ParamKey.SkipCount).toString()
+                    var todayDurationTime = maps.get(ParamKey.TodaySkipDurationTime).toString()
+                    var todaySkipCount = maps.get(ParamKey.TodaySkipCount).toString()
+                    var mode = maps.get(ParamKey.Mode).toString()
+                    var strMode = ""
+                    when (mode) {
+                        "1" -> {
+                            strMode = "Free mode"
+                        }
+                        "2" -> {
+                            strMode = "Time countdown mode"
+                        }
+                        "3" -> {
+                            strMode = "Skipping countdown mode"
+                        }
+                    }
+                    if (mode.toInt() > 0x30) {
+                        //Log.d(TAG, "dataCallback: ????")
+                    } else {
+                        binding.txtLog.text =
+                            "\n Mode: $strMode \n durationTime: $durationTime \n" +
+                                    " skipCount: $skipCount \n todayDurationTime: $todayDurationTime \n" +
+                                    " todaySkipCount: $todaySkipCount"
+                    }
+                }
+            }
 
         }
     }
@@ -252,7 +265,30 @@ class ControlDeviceActivity : BaseActivity() {
         }
     }
 
+    fun getSkipDetailFrFireStore(){
+        modelGetDetailSkip("FreeMode")
+        modelGetDetailSkip("SkippingCountdownMode")
+        modelGetDetailSkip("TimeCountdownMode")
+    }
 
+    fun modelGetDetailSkip(mode:String){
+        if (uid != null) {
+            db.collection("users").document(uid).collection("devices").document(address).collection(mode)
+                .get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        binding.txtLog.append("\n"+ "$mode: ${document.getString("date")}, " +
+                                "Skip count: ${document.getString("skipCount")}, duration time: ${document.getString("durationTime")}")
+
+                        Log.d(TAG,  "$mode:  ${document.id} => ${document.data}")
+
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "Error getting documents: ", exception)
+                }
+        }
+    }
 
     lateinit var address: String
     private fun connectDevice() {

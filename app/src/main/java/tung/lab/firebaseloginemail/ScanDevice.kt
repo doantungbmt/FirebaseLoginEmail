@@ -34,7 +34,7 @@ private const val BLUETOOTH_CONNECT_PERMISSION = 2
 private const val REQUEST_PERMISSION_LOCATION = 3
 private const val REQUEST_ENABLE_BT = 8
 
-class ScanDevice : AppCompatActivity() {
+class ScanDevice : BaseActivity() {
     companion object {
         private val TAG = ScanDevice::class.java.simpleName
     }
@@ -44,6 +44,7 @@ class ScanDevice : AppCompatActivity() {
 
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityScanDeviceBinding.inflate(layoutInflater)
@@ -61,6 +62,11 @@ class ScanDevice : AppCompatActivity() {
         initView()
         initBlueAdapter()
         registerReceivers()
+
+        if(checkDevice()){
+            getDevices()
+        }
+
 
     }
 
@@ -255,4 +261,29 @@ class ScanDevice : AppCompatActivity() {
         }
     }
 
+    fun checkDevice() : Boolean {
+        val docRef = uid?.let { db.collection("users").document(it).collection("devices").document()}
+        if (docRef != null) {
+            return true
+        }
+        return false
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getDevices(){
+        if (uid != null) {
+            db.collection("users").document(uid).collection("devices")
+                .get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        var intent = Intent(this@ScanDevice, ControlDeviceActivity::class.java)
+                        intent.putExtra("macAddress", document.id)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "Error getting documents: ", exception)
+                }
+        }
+    }
 }

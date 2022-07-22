@@ -1,7 +1,6 @@
 package tung.lab.firebaseloginemail.ui.ControlDevice
 
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -9,20 +8,14 @@ import com.google.firebase.Timestamp
 import com.jstyle.blesdk1963.Util.BleSDK
 import com.jstyle.blesdk1963.constant.ParamKey
 import com.jstyle.blesdk1963.constant.ReceiveConst
-import tung.lab.firebaseloginemail.R
 import tung.lab.firebaseloginemail.Utils.extensions.toCalendar
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityCountDownModeBinding
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import kotlin.properties.Delegates
-@RequiresApi(Build.VERSION_CODES.O)
+
+
 class TimeCountDownModeActivity : BaseActivity() {
     lateinit var binding : ActivityCountDownModeBinding
     var timeCountdownInt = 1
-    lateinit var formattedDate : String
-    lateinit var formattedTime : String
-    lateinit var formattedDateTime : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +39,7 @@ class TimeCountDownModeActivity : BaseActivity() {
     var mode = ""
     var strMode = ""
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun dataCallback(maps: MutableMap<String, Any>) {
         super.dataCallback(maps)
         var dataType = getDataType(maps)
@@ -58,8 +52,9 @@ class TimeCountDownModeActivity : BaseActivity() {
                     Timestamp(d)
                 }
                 if (dateTimestamp != null) {
-                    addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime, formattedDateTime )
+                    addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime, formattedDateTime, timeCountdownInt)
                 }
+                finish()
             } else {
                 durationTime = maps.get(ParamKey.SkipDurationTime).toString()
                 var durationTimeInt = durationTime.toInt()
@@ -82,15 +77,16 @@ class TimeCountDownModeActivity : BaseActivity() {
                                 " todaySkipCount: $todaySkipCount"
                     binding.txtTimeCountDown.text = (timeCountdownInt - durationTimeInt).toString()
                 }
-
             }
         }
     }
-    fun addDataToFireStore(typeData : String, dateTimestamp: String?, durationTime: String, date : String) {
+
+    fun addDataToFireStore(typeData : String, dateTimestamp: String?, durationTime: String, date : String, targetTime : Int) {
         val dataTotalSkip = hashMapOf(
             "durationTime" to durationTime,
             "skipCount" to skipCount,
-            "date" to date
+            "date" to date,
+            "targetTime" to targetTime
         )
 
 //        val dataTotalSkip = HashMap<String, Any>()
@@ -103,13 +99,5 @@ class TimeCountDownModeActivity : BaseActivity() {
         }
     }
 
-    fun getDateTime(){
-        val currentDate = LocalDateTime.now()
-        val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
-        val formatterDateTime = DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")
-        formattedDateTime = currentDate.format(formatterDateTime)
-        formattedDate = currentDate.format(formatterDate)
-        formattedTime = currentDate.format(formatterTime)
-    }
+
 }

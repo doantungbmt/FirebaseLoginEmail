@@ -21,10 +21,6 @@ class FreeModeActivity : BaseActivity() {
 
     lateinit var binding : ActivityFreeModeBinding
 
-    lateinit var formattedDate : String
-    lateinit var formattedTime : String
-    lateinit var formattedDateTime : String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFreeModeBinding.inflate(layoutInflater)
@@ -33,6 +29,7 @@ class FreeModeActivity : BaseActivity() {
 
         binding.btnStopSkip.setOnClickListener {
             sendValue(BleSDK.StartSkip(0x99, 0, 0))
+
         }
     }
 
@@ -57,6 +54,7 @@ class FreeModeActivity : BaseActivity() {
                 if (dateTimestamp != null) {
                     addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime, formattedDateTime )
                 }
+                finish()
             } else {
                 durationTime = maps.get(ParamKey.SkipDurationTime).toString()
                 skipCount = maps.get(ParamKey.SkipCount).toString()
@@ -98,13 +96,4 @@ class FreeModeActivity : BaseActivity() {
         }
     }
 
-    fun getDateTime(){
-        val currentDate = LocalDateTime.now()
-        val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
-        val formatterDateTime = DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")
-        formattedDateTime = currentDate.format(formatterDateTime)
-        formattedDate = currentDate.format(formatterDate)
-        formattedTime = currentDate.format(formatterTime)
-    }
 }

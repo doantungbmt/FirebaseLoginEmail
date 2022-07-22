@@ -3,9 +3,11 @@ package tung.lab.firebaseloginemail.base
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -22,6 +24,8 @@ import tung.lab.firebaseloginemail.Utils.BleData
 import tung.lab.firebaseloginemail.Utils.RxBus
 import tung.lab.firebaseloginemail.ble.BleManager
 import tung.lab.firebaseloginemail.ble.BleService
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 abstract class BaseActivity : AppCompatActivity(), DataListener2023 {
@@ -32,6 +36,10 @@ abstract class BaseActivity : AppCompatActivity(), DataListener2023 {
     lateinit var auth: FirebaseAuth
     lateinit var progressBar: ProgressBar;
     val TAG = "were"
+
+    lateinit var formattedDate : String
+    lateinit var formattedTime : String
+    lateinit var formattedDateTime : String
 
     private lateinit var subscription : Disposable
 
@@ -104,6 +112,16 @@ abstract class BaseActivity : AppCompatActivity(), DataListener2023 {
 
     fun intentToActivity (context: Context, cl : Class<*>){
         startActivity(Intent(context, cl))
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getDateTime(){
+        val currentDate = LocalDateTime.now()
+        val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
+        val formatterDateTime = DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")
+        formattedDateTime = currentDate.format(formatterDateTime)
+        formattedDate = currentDate.format(formatterDate)
+        formattedTime = currentDate.format(formatterTime)
     }
 
     override fun dataCallback(maps: MutableMap<String, Any>) {
