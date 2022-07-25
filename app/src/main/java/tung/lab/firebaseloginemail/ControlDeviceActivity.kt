@@ -24,11 +24,13 @@ import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.ble.BleManager
 import tung.lab.firebaseloginemail.ble.BleService
 import tung.lab.firebaseloginemail.databinding.ActivityControlDeviceBinding
+import tung.lab.firebaseloginemail.ui.ControlDevice.FilterSkipDetailData
 import tung.lab.firebaseloginemail.ui.ControlDevice.FreeModeActivity
 import tung.lab.firebaseloginemail.ui.ControlDevice.SkippingCountdownModeActivity
 import tung.lab.firebaseloginemail.ui.ControlDevice.TimeCountDownModeActivity
 import java.text.SimpleDateFormat
 import java.util.*
+
 @RequiresApi(Build.VERSION_CODES.O)
 class ControlDeviceActivity : BaseActivity() {
     lateinit var subscription: Disposable
@@ -84,6 +86,12 @@ class ControlDeviceActivity : BaseActivity() {
             getSkipDetailFrFireStore()
         }
 
+        binding.btnFilterData.setOnClickListener {
+            var intent = Intent(this@ControlDeviceActivity, FilterSkipDetailData::class.java)
+            intent.putExtra("address", address)
+            startActivity(intent)
+        }
+
         binding.btnStartSkip.setOnClickListener {
             var mode: Int
             var second: Int
@@ -105,7 +113,8 @@ class ControlDeviceActivity : BaseActivity() {
                 } else {
                     second = Integer.parseInt(binding.edtSecond.text.toString())
                     sendValue(BleSDK.StartSkip(mode, second, count))
-                    var intent = Intent(this@ControlDeviceActivity, TimeCountDownModeActivity::class.java)
+                    var intent =
+                        Intent(this@ControlDeviceActivity, TimeCountDownModeActivity::class.java)
                     intent.putExtra("time", binding.edtSecond.text.trim().toString())
                     intent.putExtra("address", address)
                     startActivity(intent)
@@ -113,10 +122,7 @@ class ControlDeviceActivity : BaseActivity() {
 
 
             } else if (binding.rbSkipCountdown.isChecked) {
-                var intent = Intent(this@ControlDeviceActivity, SkippingCountdownModeActivity::class.java)
-                intent.putExtra("skip", binding.edtSkip.text.trim().toString())
-                intent.putExtra("address", address)
-                startActivity(intent)
+
                 mode = 0x03
                 second = 0
                 if (binding.edtSkip.text.trim().length == 0) {
@@ -125,6 +131,13 @@ class ControlDeviceActivity : BaseActivity() {
                 } else {
                     count = (Integer.parseInt(binding.edtSkip.text.trim().toString())) / 100
                     sendValue(BleSDK.StartSkip(mode, second, count))
+                    var intent = Intent(
+                        this@ControlDeviceActivity,
+                        SkippingCountdownModeActivity::class.java
+                    )
+                    intent.putExtra("skip", binding.edtSkip.text.trim().toString())
+                    intent.putExtra("address", address)
+                    startActivity(intent)
                 }
             }
         }
@@ -167,7 +180,13 @@ class ControlDeviceActivity : BaseActivity() {
                     }
                     var durationTime = maps.get(ParamKey.SkipDurationTime).toString()
                     var skipCount = maps.get(ParamKey.SkipCount).toString()
-                    addDataToFireStore(dateTimestamp?.seconds.toString(), durationTime, skipCount, date, "totalSkipData")
+                    addDataToFireStore(
+                        dateTimestamp?.seconds.toString(),
+                        durationTime,
+                        skipCount,
+                        date,
+                        "totalSkipData"
+                    )
                     binding.txtLog.append("\n $date === durationTime: $durationTime, skipCount: $skipCount")
                 }
             }
@@ -248,58 +267,57 @@ class ControlDeviceActivity : BaseActivity() {
     }
 
 
-//    fun addDataToFireStore(dateTimestamp: String?, durationTime : String?,
-//                           skipCount : String?, date : String?,
-//                            typeData : String) {
-//        val dataTotalSkip = hashMapOf(
-//            "durationTime" to durationTime,
-//            "skipCount" to skipCount,
-//            "date" to date
-//        )
-//
-//        if (uid != null && dateTimestamp != null) {
-//            db.collection("users").document(uid)
-//                .collection("devices").document(address).collection(typeData)
-//                .document(dateTimestamp)
-//                .set(dataTotalSkip)
-//        }
-//    }
-
-        fun addDataToFireStore(dateTimestamp: String?, durationTime : String?,
-                           skipCount : String?, date : String?,
-                            typeData : String) {
+    fun addDataToFireStore(
+        dateTimestamp: String?, durationTime: String?,
+        skipCount: String?, date: String?,
+        typeData: String
+    ) {
         val dataTotalSkip = hashMapOf(
             "durationTime" to durationTime,
             "skipCount" to skipCount,
             "date" to date
         )
+        //add totalSkipData to firestore depend on date (timestamp)
+//        if (uid != null && dateTimestamp != null) {
+//            db.collection("users").document(uid)
+//                .collection("devices").document(address).collection(dateTimestamp)
+//                .document(typeData)
+//                .set(dataTotalSkip)
+//        }
 
+        //add totalSkipData to firestore depend on mode
         if (uid != null && dateTimestamp != null) {
             db.collection("users").document(uid)
-                .collection("devices").document(address).collection(dateTimestamp)
-                .document(typeData)
+                .collection("devices").document(address).collection(typeData)
+                .document(dateTimestamp)
                 .set(dataTotalSkip)
         }
     }
 
 
-
-    fun getSkipDetailFrFireStore(){
+    fun getSkipDetailFrFireStore() {
         modelGetDetailSkip("FreeMode")
         modelGetDetailSkip("SkippingCountdownMode")
         modelGetDetailSkip("TimeCountdownMode")
     }
 
-    fun modelGetDetailSkip(mode:String){
+    fun modelGetDetailSkip(mode: String) {
         if (uid != null) {
-            db.collection("users").document(uid).collection("devices").document(address).collection(mode)
+            db.collection("users").document(uid).collection("devices").document(address)
+                .collection(mode)
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        binding.txtLog.append("\n"+ "$mode: ${document.getString("date")}, " +
-                                "Skip count: ${document.getString("skipCount")}, duration time: ${document.getString("durationTime")}")
+                        binding.txtLog.append(
+                            "\n" + "$mode: ${document.getString("date").toString()}, " +
+                                    "Skip count: ${document.getString("skipCount")}, duration time: ${
+                                        document.getString(
+                                            "durationTime"
+                                        )
+                                    }"
+                        )
 
-                        Log.d(TAG,  "$mode:  ${document.id} => ${document.data}")
+                        Log.d(TAG, "$mode:  ${document.id} => ${document.data}")
 
                     }
                 }

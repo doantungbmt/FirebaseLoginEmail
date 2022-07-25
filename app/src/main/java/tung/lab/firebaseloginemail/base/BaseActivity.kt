@@ -116,7 +116,7 @@ abstract class BaseActivity : AppCompatActivity(), DataListener2023 {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getDateTime(){
         val currentDate = LocalDateTime.now()
-        val formatterDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val formatterDate = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         val formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss")
         val formatterDateTime = DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")
         formattedDateTime = currentDate.format(formatterDateTime)

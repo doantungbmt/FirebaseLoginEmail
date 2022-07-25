@@ -51,11 +51,14 @@ class SkippingCountdownModeActivity : BaseActivity() {
             if (maps.containsKey(ParamKey.End)) {
                 binding.txtLog.append("\n End")
                 getDateTime()
-                var dateTimestamp = formattedDateTime.toCalendar("dd-MM-yyy HH:mm:ss")?.time?.let { d ->
+                var dateTimestamp = formattedDateTime.toCalendar("dd-MM-yyyy HH:mm:ss")?.time?.let { d ->
                     Timestamp(d)
                 }
-                if (dateTimestamp != null) {
-                    addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime, skipCountdownInt)
+                var dateTimestampParent = formattedDateTime.toCalendar("dd-MM-yyyy")?.time?.let { d ->
+                    Timestamp(d)
+                }
+                if (dateTimestamp != null && dateTimestampParent != null) {
+                    addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime, skipCountdownInt, dateTimestampParent.seconds.toString(), formattedDateTime)
                 }
                 finish()
             } else {
@@ -85,16 +88,25 @@ class SkippingCountdownModeActivity : BaseActivity() {
         }
     }
 
-    fun addDataToFireStore(typeData : String, dateTimestamp: String?, durationTime: String, targetSkip : Int) {
+    fun addDataToFireStore(typeData : String, dateTimestamp: String?, durationTime: String, targetSkip : Int, dateTimestampParent: String?, date : String?) {
         val dataTotalSkip = hashMapOf(
             "durationTime" to durationTime,
             "skipCount" to skipCount,
             "targetSkip" to targetSkip,
-            "date" to serverTimestamp()
+            "date" to date
         )
 
 //        val dataTotalSkip = HashMap<String, Any>()
+        //add Time countdown mode data to firestore depend on date -> type data -> time in date -> data
+//        if (uid != null && dateTimestamp != null && dateTimestampParent != null) {
+//            db.collection("users").document(uid)
+//                .collection("devices").document(intent.getStringExtra("address").toString())
+//                .collection(dateTimestampParent).document(typeData)
+//                .collection(dateTimestamp).document("data")
+//                .set(dataTotalSkip)
+//        }
 
+        //add time countdown mode data to firestore depend on mode -> date time -> data
         if (uid != null && dateTimestamp != null) {
             db.collection("users").document(uid)
                 .collection("devices").document(intent.getStringExtra("address").toString())

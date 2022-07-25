@@ -110,6 +110,17 @@
             android:text="Skip detail data"
             android:textAllCaps="false"
             android:textSize="12dp" />
+
+        <Button
+            android:textColor="@color/white"
+            android:id="@+id/btnFilterData"
+            android:layout_marginStart="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/teal_700"
+            android:text="Filter data"
+            android:textAllCaps="false"
+            android:textSize="12dp" />
     </LinearLayout>
 
     <RadioGroup
@@ -193,6 +204,8 @@
             android:text="Stop Skip"
             android:textAllCaps="false"
             android:textSize="12dp" />
+
+
 
     </LinearLayout>
 
