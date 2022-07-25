@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FieldValue
 import com.jstyle.blesdk1963.Util.BleSDK
 import com.jstyle.blesdk1963.constant.ParamKey
 import com.jstyle.blesdk1963.constant.ReceiveConst
@@ -52,7 +53,7 @@ class FreeModeActivity : BaseActivity() {
                     Timestamp(d)
                 }
                 if (dateTimestamp != null) {
-                    addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime, formattedDateTime )
+                    addDataToFireStore(strMode ,dateTimestamp.seconds.toString(), durationTime)
                 }
                 finish()
             } else {
@@ -79,11 +80,11 @@ class FreeModeActivity : BaseActivity() {
         }
     }
 
-    fun addDataToFireStore(typeData : String, dateTimestamp: String?, durationTime: String, date : String) {
+    fun addDataToFireStore(typeData : String, dateTimestamp: String?, durationTime: String) {
         val dataTotalSkip = hashMapOf(
             "durationTime" to durationTime,
             "skipCount" to skipCount,
-            "date" to date
+            "date" to FieldValue.serverTimestamp()
         )
 
 //        val dataTotalSkip = HashMap<String, Any>()

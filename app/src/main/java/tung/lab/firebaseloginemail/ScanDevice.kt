@@ -63,9 +63,9 @@ class ScanDevice : BaseActivity() {
         initBlueAdapter()
         registerReceivers()
 
-        if(checkDevice()){
-            getDevices()
-        }
+//        if(checkDevice()){
+//            getDevices()
+//        }
 
 
     }
@@ -261,29 +261,29 @@ class ScanDevice : BaseActivity() {
         }
     }
 
-    fun checkDevice() : Boolean {
-        val docRef = uid?.let { db.collection("users").document(it).collection("devices").document()}
-        if (docRef != null) {
-            return true
-        }
-        return false
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun getDevices(){
-        if (uid != null) {
-            db.collection("users").document(uid).collection("devices")
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        var intent = Intent(this@ScanDevice, ControlDeviceActivity::class.java)
-                        intent.putExtra("macAddress", document.id)
-                        startActivity(intent)
-                        finish()
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "Error getting documents: ", exception)
-                }
-        }
-    }
+//    fun checkDevice() : Boolean {
+//        val docRef = uid?.let { db.collection("users").document(it).collection("devices").document()}
+//        if (docRef != null) {
+//            return true
+//        }
+//        return false
+//    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    fun getDevices(){
+//        if (uid != null) {
+//            db.collection("users").document(uid).collection("devices")
+//                .get()
+//                .addOnSuccessListener { result ->
+//                    for (document in result) {
+//                        var intent = Intent(this@ScanDevice, ControlDeviceActivity::class.java)
+//                        intent.putExtra("macAddress", document.id)
+//                        startActivity(intent)
+//                        finish()
+//                    }
+//                }
+//                .addOnFailureListener { exception ->
+//                    Log.d(TAG, "Error getting documents: ", exception)
+//                }
+//        }
+//    }
 }

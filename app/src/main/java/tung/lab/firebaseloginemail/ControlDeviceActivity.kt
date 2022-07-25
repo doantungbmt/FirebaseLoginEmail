@@ -248,7 +248,24 @@ class ControlDeviceActivity : BaseActivity() {
     }
 
 
-    fun addDataToFireStore(dateTimestamp: String?, durationTime : String?,
+//    fun addDataToFireStore(dateTimestamp: String?, durationTime : String?,
+//                           skipCount : String?, date : String?,
+//                            typeData : String) {
+//        val dataTotalSkip = hashMapOf(
+//            "durationTime" to durationTime,
+//            "skipCount" to skipCount,
+//            "date" to date
+//        )
+//
+//        if (uid != null && dateTimestamp != null) {
+//            db.collection("users").document(uid)
+//                .collection("devices").document(address).collection(typeData)
+//                .document(dateTimestamp)
+//                .set(dataTotalSkip)
+//        }
+//    }
+
+        fun addDataToFireStore(dateTimestamp: String?, durationTime : String?,
                            skipCount : String?, date : String?,
                             typeData : String) {
         val dataTotalSkip = hashMapOf(
@@ -259,11 +276,13 @@ class ControlDeviceActivity : BaseActivity() {
 
         if (uid != null && dateTimestamp != null) {
             db.collection("users").document(uid)
-                .collection("devices").document(address).collection(typeData)
-                .document(dateTimestamp)
+                .collection("devices").document(address).collection(dateTimestamp)
+                .document(typeData)
                 .set(dataTotalSkip)
         }
     }
+
+
 
     fun getSkipDetailFrFireStore(){
         modelGetDetailSkip("FreeMode")

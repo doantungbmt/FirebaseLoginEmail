@@ -13,4 +13,5 @@
     <string name="pair_device">Please Connect Device</string>
     <string name="disconnect">Disconnect</string>
     <string name="connectting">Connecting</string>
+    <string name="logout">Log out</string>
 </resources>
