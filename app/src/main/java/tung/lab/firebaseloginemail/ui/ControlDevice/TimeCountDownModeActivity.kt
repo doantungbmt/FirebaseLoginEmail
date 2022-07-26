@@ -90,7 +90,8 @@ class TimeCountDownModeActivity : BaseActivity() {
             "durationTime" to durationTime,
             "skipCount" to skipCount,
             "date" to date,
-            "targetTime" to targetTime
+            "targetTime" to targetTime,
+            "timestamp" to FieldValue.serverTimestamp()
         )
 
 //        val dataTotalSkip = HashMap<String, Any>()

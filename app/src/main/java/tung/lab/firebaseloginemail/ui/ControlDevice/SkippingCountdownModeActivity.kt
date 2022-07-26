@@ -93,7 +93,8 @@ class SkippingCountdownModeActivity : BaseActivity() {
             "durationTime" to durationTime,
             "skipCount" to skipCount,
             "targetSkip" to targetSkip,
-            "date" to date
+            "date" to date,
+            "timestamp" to FieldValue.serverTimestamp()
         )
 
 //        val dataTotalSkip = HashMap<String, Any>()

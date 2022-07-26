@@ -2,23 +2,23 @@ package tung.lab.firebaseloginemail.ui.ControlDevice
 
 import android.app.DatePickerDialog
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.google.firebase.Timestamp
-import tung.lab.firebaseloginemail.R
-import tung.lab.firebaseloginemail.Utils.extensions.toCalendar
+import com.google.android.material.datepicker.MaterialDatePicker
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityFilterSkipDetailDataBinding
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import tung.lab.firebaseloginemail.model.DetailDataModel
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
-import kotlin.math.log
 
 class FilterSkipDetailData : BaseActivity() {
     lateinit var binding : ActivityFilterSkipDetailDataBinding
     var address = ""
+    var listDetailDataModel : MutableList<DetailDataModel> = mutableListOf()
+    var detailDataModel = DetailDataModel()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,58 +27,67 @@ class FilterSkipDetailData : BaseActivity() {
         setContentView(view)
         address = intent.getStringExtra("address").toString()
         getDateTime()
-        getSkipDetailFrFireStore()
+
         click()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun click(){
         binding.txtSelectDate.setOnClickListener{
-            val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
+            val datePicker = MaterialDatePicker.Builder.datePicker().build()
+            datePicker.show(supportFragmentManager, "DatePicker")
 
+            // Setting up the event for when ok is clicked
+            datePicker.addOnPositiveButtonClickListener {
+                // formatting date in dd-mm-yyyy format.
+                val dateFormatter = SimpleDateFormat("dd-MM-yyyy")
+                val date = dateFormatter.format(Date(it))
+                binding.txtSelectDate.text = date
+                binding.txtLog.text = ""
+                getSkipDetailFrFireStore(date)
 
-            val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            }
 
-                // Display Selected date in textbox
-                binding.txtSelectDate.setText("" + dayOfMonth + "-" + monthOfYear + "-" + year)
+            // Setting up the event for when cancelled is clicked
+            datePicker.addOnNegativeButtonClickListener {
+                Toast.makeText(this, "${datePicker.headerText} is cancelled", Toast.LENGTH_LONG).show()
+            }
 
-            }, year, month, day)
-
-            dpd.show()
+            // Setting up the event for when back button is pressed
+            datePicker.addOnCancelListener {
+                Toast.makeText(this, "Date Picker Cancelled", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getSkipDetailFrFireStore() {
-        modelGetDetailSkip("FreeMode")
-        modelGetDetailSkip("SkippingCountdownMode")
-        modelGetDetailSkip("TimeCountdownMode")
+    fun getSkipDetailFrFireStore(date : String) {
+        modelGetDetailSkip("FreeMode", date)
+        modelGetDetailSkip("SkippingCountdownMode", date)
+        modelGetDetailSkip("TimeCountdownMode", date)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun modelGetDetailSkip(mode: String) {
+    fun modelGetDetailSkip(mode: String, date: String) {
         if (uid != null) {
             db.collection("users").document(uid).collection("devices").document(address)
                 .collection(mode)
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        val firstApiFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")
-                        val date = LocalDate.parse(document.getString("date") , firstApiFormat)
+                        val dateGetFromFS = SimpleDateFormat("dd-MM-yyyy").parse(document.getString("date")) as Date
+                        val dateForFilter = SimpleDateFormat("dd-MM-yyyy").format(dateGetFromFS)
 
-                        Log.d("were1", date.toString())
-                        binding.txtLog.append(
-                            "\n" + "$mode: ${document.getString("date").toString()}, " +
-                                    "Skip count: ${document.getString("skipCount")}, duration time: ${
-                                        document.getString(
-                                            "durationTime"
-                                        )
-                                    }"
-                        )
-                        Log.d(TAG, "$mode:  ${document.id} => ${document.data}")
+                        var duarationTime = document.getString("durationTime")?.toInt()
+                        var skipCount = document.getString("skipCount")?.toInt()
+                        var stepPerMin = (60 * skipCount!!) / duarationTime!!
 
+                        if(dateForFilter.compareTo(date) == 0){
+                            binding.txtLog.append(
+                                "\n" + "$mode: ${document.getString("date").toString()}, " +
+                                        "Skip count: $skipCount, duration time: $duarationTime, Step per min: $stepPerMin"
+                            )
+                        }
                     }
                 }
                 .addOnFailureListener { exception ->
@@ -90,3 +99,4 @@ class FilterSkipDetailData : BaseActivity() {
 
 
 }
+

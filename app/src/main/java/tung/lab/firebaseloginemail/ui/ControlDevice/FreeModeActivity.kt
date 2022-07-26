@@ -87,7 +87,8 @@ class FreeModeActivity : BaseActivity() {
         val dataTotalSkip = hashMapOf(
             "durationTime" to durationTime,
             "skipCount" to skipCount,
-            "date" to date
+            "date" to date,
+            "timestamp" to FieldValue.serverTimestamp()
         )
 
 //        val dataTotalSkip = HashMap<String, Any>()

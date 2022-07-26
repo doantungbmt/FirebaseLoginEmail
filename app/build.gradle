@@ -62,4 +62,11 @@ dependencies {
 
     //Ted Permission
     implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
+    // Gson
+    implementation "com.google.code.gson:gson:2.8.9"
+
+    //material design
+    implementation "com.google.android.material:material:1.7.0-alpha03"
+
+
 }
