@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/secondary_background"
+    tools:context=".ui.UserProfile.WeightActivity">
+
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="@string/personal_info"
+        android:textColor="@color/dark_primary"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="18dp"
+        android:src="@drawable/ic_toolbar_back"
+        app:layout_constraintBottom_toBottomOf="@id/tvHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHeader" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:gravity="center"
+        android:text="@string/your_weight"
+        android:textColor="@color/on_background"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="53dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="@string/used_in_the_energy_burn_calculations_and_can_be_updated_under_settings"
+        android:textColor="@color/on_background"
+        android:textSize="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <com.shawnlin.numberpicker.NumberPicker
+        android:id="@+id/npWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDesc"
+        app:np_dividerColor="@color/transparent"
+        app:np_dividerType="side_lines"
+        app:np_fadingEdgeEnabled="true"
+        app:np_selectedTextAlign="selectedTextAlignCenter"
+        app:np_selectedTextColor="@color/dark_primary"
+        app:np_selectedTextSize="16dp"
+        app:np_textAlign="textAlignCenter"
+        app:np_textColor="@color/on_background"
+        app:np_textSize="16dp" />
+
+    <TextView
+        android:id="@+id/tvMeasureWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="-15dp"
+        android:layout_marginBottom="3dp"
+        android:text="@string/kg"
+        android:textColor="@color/dark_primary"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/npWeight"
+        app:layout_constraintStart_toEndOf="@id/npWeight"
+        app:layout_constraintTop_toTopOf="@id/npWeight" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/light_primary_opacity_20"
+        app:layout_constraintBottom_toBottomOf="@id/npWeight"
+        app:layout_constraintTop_toTopOf="@id/npWeight" />
+
+    <TextView
+        android:id="@+id/tvConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:background="@drawable/bg_button_confirm_personal_info_selector"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="@string/confirm"
+        android:textColor="@color/thirdly_text_color"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/npWeight" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

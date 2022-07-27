@@ -68,5 +68,8 @@ dependencies {
     //material design
     implementation "com.google.android.material:material:1.7.0-alpha03"
 
+    //Number Picker
+    implementation 'io.github.ShawnLin013:number-picker:2.4.13'
+
 
 }

@@ -14,4 +14,37 @@
     <string name="disconnect">Disconnect</string>
     <string name="connectting">Connecting</string>
     <string name="logout">Log out</string>
+    <string name="title_activity_height">HeightActivity</string>
+
+    <string name="personal_info">Personal Info</string>
+    <string name="your_name">Your Name</string>
+    <string name="please_enter_your_profile_name">Please enter your profile name</string>
+    <string name="input_name">Input Name</string>
+    <string name="confirm">Confirm</string>
+
+    <!--Personal Info Gender-->
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="used_in_the_energy_burn_calulations">Used in the energy burn calulations</string>
+    <string name="your_gender">Your Gender</string>
+
+    <!--Personal Info Height-->
+    <string name="your_height">Your Height</string>
+    <string name="used_to_determine_stride_length">Used to determine stride length</string>
+    <string name="cm">cm</string>
+
+    <!--Personal Info Weight-->
+    <string name="your_weight">Your Weight</string>
+    <string name="used_in_the_energy_burn_calculations_and_can_be_updated_under_settings">Used in the energy burn calculations and can be updated under Settings</string>
+    <string name="kg">kg</string>
+    <string name="select_from_album">Select From Album</string>
+    <string name="take_photos">Take Photos</string>
+    <string name="cancel">Cancel</string>
+    <string name="healthy_life_style">HealthyLifeStyle</string>
+    <string name="check_your_email_again">Check your email again</string>
+
+    <!--Personal Info Birthday-->
+    <string name="your_birthday">Your Birthday</string>
+    <string name="used_in_the_energy_burn_calculations">Used in the energy burn calculations</string>
+
 </resources>

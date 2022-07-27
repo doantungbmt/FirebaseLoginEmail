@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import tung.lab.firebaseloginemail.ScanDevice
-import tung.lab.firebaseloginemail.UserProfile
 
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityMainBinding

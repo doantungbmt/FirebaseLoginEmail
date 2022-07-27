@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/secondary_background"
+    tools:context=".ui.UserProfile.BirthdayActivity">
+
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="@string/personal_info"
+        android:textColor="@color/dark_primary"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="18dp"
+        android:src="@drawable/ic_toolbar_back"
+        app:layout_constraintBottom_toBottomOf="@id/tvHeader"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvHeader" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:gravity="center"
+        android:text="@string/your_birthday"
+        android:textColor="@color/on_background"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvHeader" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="53dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="@string/used_in_the_energy_burn_calculations"
+        android:textColor="@color/on_background"
+        android:textSize="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctrYear"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toStartOf="@id/ctrMonth"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDesc">
+
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/npYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvYear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:np_dividerColor="@color/transparent"
+            app:np_dividerType="side_lines"
+            app:np_fadingEdgeEnabled="true"
+            app:np_selectedTextAlign="selectedTextAlignCenter"
+            app:np_selectedTextColor="@color/dark_primary"
+            app:np_selectedTextSize="16dp"
+            app:np_textAlign="textAlignCenter"
+            app:np_textColor="@color/on_background"
+            app:np_textSize="16dp"
+            app:np_wrapSelectorWheel="false" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvYear"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="-5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Year"
+            android:textColor="@color/dark_primary"
+            android:textSize="16dp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@id/npYear"
+            app:layout_constraintStart_toEndOf="@id/npYear"
+            app:layout_constraintTop_toTopOf="@id/npYear" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctrMonth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toStartOf="@id/ctrDay"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/ctrYear"
+        app:layout_constraintTop_toBottomOf="@id/tvDesc">
+
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/npMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:np_dividerColor="@color/transparent"
+            app:np_dividerType="side_lines"
+            app:np_fadingEdgeEnabled="true"
+            app:np_selectedTextAlign="selectedTextAlignCenter"
+            app:np_selectedTextColor="@color/dark_primary"
+            app:np_selectedTextSize="16dp"
+            app:np_textAlign="textAlignCenter"
+            app:np_textColor="@color/on_background"
+            app:np_textSize="16dp"
+            app:np_wrapSelectorWheel="false" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="-15dp"
+            android:layout_marginBottom="5dp"
+            android:text="Month"
+            android:textColor="@color/dark_primary"
+            android:textSize="16dp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@id/npMonth"
+            app:layout_constraintStart_toEndOf="@id/npMonth"
+            app:layout_constraintTop_toTopOf="@id/npMonth" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctrDay"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/ctrMonth"
+        app:layout_constraintTop_toBottomOf="@id/tvDesc">
+
+        <com.shawnlin.numberpicker.NumberPicker
+            android:id="@+id/npDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:np_dividerColor="@color/transparent"
+            app:np_dividerType="side_lines"
+            app:np_fadingEdgeEnabled="true"
+            app:np_selectedTextAlign="selectedTextAlignCenter"
+            app:np_selectedTextColor="@color/dark_primary"
+            app:np_selectedTextSize="16dp"
+            app:np_textAlign="textAlignCenter"
+            app:np_textColor="@color/on_background"
+            app:np_textSize="16dp"
+            app:np_wrapSelectorWheel="false" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvDay"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="-15dp"
+            android:layout_marginBottom="5dp"
+            android:text="Day"
+            android:textColor="@color/dark_primary"
+            android:textSize="16dp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@id/npDay"
+            app:layout_constraintStart_toEndOf="@id/npDay"
+            app:layout_constraintTop_toTopOf="@id/npDay" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/light_primary_opacity_20"
+        app:layout_constraintBottom_toBottomOf="@id/ctrYear"
+        app:layout_constraintTop_toTopOf="@id/ctrYear" />
+
+    <TextView
+        android:id="@+id/tvConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:background="@drawable/bg_button_confirm_personal_info_selector"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="@string/confirm"
+        android:textColor="@color/thirdly_text_color"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ctrYear" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

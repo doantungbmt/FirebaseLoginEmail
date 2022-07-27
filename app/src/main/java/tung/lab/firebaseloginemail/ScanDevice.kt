@@ -27,6 +27,7 @@ import com.google.firebase.ktx.Firebase
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityScanDeviceBinding
 import tung.lab.firebaseloginemail.ui.Login.SignIn
+import tung.lab.firebaseloginemail.ui.UserProfile.UserProfile
 import java.util.HashMap
 @RequiresApi(Build.VERSION_CODES.O)
 private const val BLUETOOTH_SCAN_PERMISSION = 1
@@ -57,6 +58,10 @@ class ScanDevice : BaseActivity() {
             intent = Intent(this@ScanDevice, SignIn::class.java)
             startActivity(intent)
             finish()
+        }
+
+        binding.btnUserProfile.setOnClickListener {
+            intentToActivity(this@ScanDevice, UserProfile::class.java)
         }
 
         initView()

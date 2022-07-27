@@ -3,17 +3,32 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/bg_button_confirm_personal_info_selector.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_female.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_female_selected.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_female_unselect.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_male.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_male_selected.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_male_unselect.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/ic_toolbar_back.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/pink_out_line.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/toggle_widget_background.xml" value="0.221" />
+        <entry key="app/src/main/res/layout/activity_birthday.xml" value="0.35989583333333336" />
+        <entry key="app/src/main/res/layout/activity_change_name.xml" value="0.35989583333333336" />
+        <entry key="app/src/main/res/layout/activity_choose_gender.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/activity_control_device.xml" value="0.3016304347826087" />
         <entry key="app/src/main/res/layout/activity_count_down_mode.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/activity_filter_skip_detail_data.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/activity_free_mode.xml" value="0.32760416666666664" />
+        <entry key="app/src/main/res/layout/activity_height.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/activity_scan.xml" value="0.32155797101449274" />
         <entry key="app/src/main/res/layout/activity_scan_device.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/activity_skipping_countdown_mode.xml" value="0.32760416666666664" />
-        <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_weight.xml" value="0.35989583333333336" />
       </map>
     </option>
   </component>
