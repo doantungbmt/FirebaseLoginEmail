@@ -9,14 +9,21 @@ import android.util.Log
 import android.widget.CompoundButton
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import tung.lab.firebaseloginemail.R
 import tung.lab.firebaseloginemail.ScanDevice
 
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityMainBinding
+import tung.lab.firebaseloginemail.db.DBHelper
+import kotlin.math.log
 
 class SignIn : BaseActivity() {
+
+
 
     private lateinit var binding: ActivityMainBinding
 
@@ -43,6 +50,7 @@ class SignIn : BaseActivity() {
                 signIn(binding.edtEmail.text.trim().toString(), binding.edtPassWord.text.trim().toString())
             }
         }
+
     }
 
     override fun onStart() {
@@ -63,7 +71,9 @@ class SignIn : BaseActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
-                    val user = auth.currentUser
+//                    val user = auth.currentUser
+                    val uidLogin = Firebase.auth.currentUser?.uid
+                    getUserInfo(uidLogin)
                     Toast.makeText(this@SignIn, "Sign In successful", Toast.LENGTH_SHORT)
                         .show()
                     intent = Intent(this@SignIn, ScanDevice::class.java)
@@ -167,5 +177,26 @@ class SignIn : BaseActivity() {
         }
 
     }
+    private fun getUserInfo(uidLogin : String?) {
+        val docRef = uidLogin?.let { db.collection("users").document(it) }
+        if (docRef != null) {
+            docRef.get()
+                .addOnSuccessListener { document ->
+                    if (document != null) {
+                        binding.apply {
+                            val sqlDB = DBHelper(this@SignIn, null)
+                            sqlDB.addUser(document.getString("name"),document.getLong("gender")?.toInt(),
+                                document.getLong("height")?.toInt(),document.getLong("weight")?.toInt(),
+                                document.getString("birthday"))
+                        }
 
+                    } else {
+                        Log.d(TAG, "No such document")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "get failed with ", exception)
+                }
+        }
+    }
 }

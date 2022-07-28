@@ -26,6 +26,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityScanDeviceBinding
+import tung.lab.firebaseloginemail.db.DBHelper
 import tung.lab.firebaseloginemail.ui.Login.SignIn
 import tung.lab.firebaseloginemail.ui.UserProfile.UserProfile
 import java.util.HashMap
@@ -77,6 +78,9 @@ class ScanDevice : BaseActivity() {
 
     private fun signOut() {
         Firebase.auth.signOut()
+        ///sign out -> delete
+        val sqlDB = DBHelper(this, null)
+        sqlDB.deleteUser()
     }
 
     override fun onDestroy() {

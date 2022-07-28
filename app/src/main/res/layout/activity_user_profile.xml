@@ -62,7 +62,7 @@
             android:layout_height="match_parent"/>
         <RadioGroup
             android:checkedButton="@+id/rbKg"
-            android:id="@+id/rbWeight"
+            android:id="@+id/rgWeight"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:background="@drawable/pink_out_line"
@@ -171,7 +171,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"/>
         <TextView
-            android:id="@+id/txtEeight"
+            android:id="@+id/txtWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

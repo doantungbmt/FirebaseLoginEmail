@@ -1,9 +1,13 @@
 package tung.lab.firebaseloginemail.ui.UserProfile
 
+import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.util.Log
+import com.google.firebase.firestore.SetOptions
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityBirthdayBinding
+import tung.lab.firebaseloginemail.db.DBHelper
 import java.text.DecimalFormat
 import java.util.*
 
@@ -24,23 +28,35 @@ class BirthdayActivity : BaseActivity() {
                 finish()
             }
             tvConfirm.setOnClickListener {
-
+                var birthday = "${npDay.displayedValues[npDay.value-1]}/${npMonth.displayedValues[npMonth.value-1]}/${npYear.displayedValues[npYear.value-1]}"
+                addBirthdayToFS(birthday)
+                updateBirthdaySQLite(birthday)
+                val intent = Intent(this@BirthdayActivity, UserProfile::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+                finish()
             }
         }
     }
 
     fun addBirthdayToFS(birthday : String){
-        val name = hashMapOf(
-            "name" to birthday
+        val birthday = hashMapOf(
+            "birthday" to birthday
         )
-
         if (uid != null) {
             db.collection("users").document(uid)
-                .update(name as Map<String, Any>)
+                .set(birthday, SetOptions.merge())
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
         }
     }
+
+    fun updateBirthdaySQLite(birthday : String){
+        val sqlDB = DBHelper(this@BirthdayActivity, null)
+        val user = sqlDB.getUserDetails()
+        sqlDB.updateBirthday(user?.get("id").toString(),birthday)
+    }
+
 
     fun initPicker() {
         binding?.run {

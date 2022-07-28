@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import com.google.firebase.firestore.SetOptions
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityChangeNameBinding
+import tung.lab.firebaseloginemail.db.DBHelper
+import tung.lab.firebaseloginemail.model.FSUser
 
 class ChangeNameActivity : BaseActivity() {
     lateinit var binding: ActivityChangeNameBinding
@@ -29,15 +32,18 @@ class ChangeNameActivity : BaseActivity() {
     }
 
     fun onClick() {
-        binding.imgBack.setOnClickListener {
-            finish()
-        }
-        binding.btnConfirm.setOnClickListener {
-            addNameToFS(binding.edtInputName.text.toString())
-            val intent = Intent(this@ChangeNameActivity, UserProfile::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
-            finish()
+        binding.apply {
+            imgBack.setOnClickListener {
+                finish()
+            }
+            btnConfirm.setOnClickListener {
+                addNameToFS(edtInputName.text.toString())
+                updateNameSQLite(edtInputName.text.toString())
+                val intent = Intent(this@ChangeNameActivity, UserProfile::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
@@ -48,9 +54,15 @@ class ChangeNameActivity : BaseActivity() {
 
         if (uid != null) {
             db.collection("users").document(uid)
-                .update(name as Map<String, Any>)
+                .set(name, SetOptions.merge())
                 .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
         }
+    }
+
+    fun updateNameSQLite(name : String){
+        val sqlDB = DBHelper(this@ChangeNameActivity, null)
+        val user = sqlDB.getUserDetails()
+        sqlDB.updateName(user?.get("id").toString(),name)
     }
 }

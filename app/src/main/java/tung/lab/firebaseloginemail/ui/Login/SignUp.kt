@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivitySignInBinding
+import tung.lab.firebaseloginemail.db.DBHelper
 
 class SignUp : BaseActivity() {
     private lateinit var binding: ActivitySignInBinding
@@ -38,6 +39,8 @@ class SignUp : BaseActivity() {
                     Log.d(TAG, "createUserWithEmail:success")
                     val user = auth.currentUser
                     //updateUI(user)
+                    val sqlDB = DBHelper(this@SignUp, null)
+                    sqlDB.addUser(null,null,null,null,null)
                     Toast.makeText(baseContext, "Sign up successful", Toast.LENGTH_SHORT).show()
                     intentToActivity(this@SignUp, SignIn::class.java)
                     finish()

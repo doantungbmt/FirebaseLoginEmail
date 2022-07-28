@@ -24,13 +24,13 @@ import tung.lab.firebaseloginemail.Utils.BleData
 import tung.lab.firebaseloginemail.Utils.RxBus
 import tung.lab.firebaseloginemail.ble.BleManager
 import tung.lab.firebaseloginemail.ble.BleService
+import tung.lab.firebaseloginemail.db.DBHelper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
 abstract class BaseActivity : AppCompatActivity(), DataListener2023 {
-
-    val db = Firebase.firestore
+    var db = Firebase.firestore
     val user = Firebase.auth.currentUser
     val uid = user?.uid
     lateinit var auth: FirebaseAuth

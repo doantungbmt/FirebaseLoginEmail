@@ -50,6 +50,7 @@ class ControlDeviceActivity : BaseActivity() {
                     if (action == BleService.ACTION_GATT_onDescriptorWrite) {
                         progressDialog!!.dismiss()
                         addDeviceToFireStore()
+                        sendValue(BleSDK.SetDeviceTime(MyDeviceTime(Calendar.getInstance())))
                     } else if (action == BleService.ACTION_GATT_DISCONNECTED) {
                         progressDialog!!.dismiss()
                     }
@@ -244,7 +245,7 @@ class ControlDeviceActivity : BaseActivity() {
             }
         }
     }
-
+    //add device to FS and add user infor field
     fun addDeviceToFireStore() {
         val dataTotalSkip = HashMap<String, Any>()
 
