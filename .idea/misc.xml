@@ -28,6 +28,7 @@
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.32708333333333334" />
         <entry key="app/src/main/res/layout/activity_skipping_countdown_mode.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_verify_email.xml" value="0.35989583333333336" />
         <entry key="app/src/main/res/layout/activity_weight.xml" value="0.35989583333333336" />
       </map>
     </option>

@@ -18,8 +18,6 @@ import java.util.*
 class UserProfile : BaseActivity() {
     lateinit var binding: ActivityUserProfileBinding
     var gender = "0"
-    var weightKg = 0
-    var weightLb = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -128,8 +126,6 @@ class UserProfile : BaseActivity() {
             }
             txtHeight.text = user?.get("height")
             txtWeight.text = user?.get("weight")
-            weightKg = user?.get("weight")?.toInt()!!
-            weightLb = (user?.get("weight")?.toInt()!! * 2.2).toLong()
             txtBirthday.text = user?.get("birthday")
         }
     }
