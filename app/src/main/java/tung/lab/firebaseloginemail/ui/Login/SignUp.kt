@@ -1,9 +1,13 @@
 package tung.lab.firebaseloginemail.ui.Login
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.actionCodeSettings
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivitySignInBinding
 import tung.lab.firebaseloginemail.db.DBHelper
@@ -32,17 +36,39 @@ class SignUp : BaseActivity() {
 
     }
 
+
     private fun createUser(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) {
                 if (it.isSuccessful) {
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
+                    val user = Firebase.auth.currentUser
+                    val actionCodeSettings = actionCodeSettings {
+                        // URL you want to redirect back to. The domain (www.example.com) for this
+                        // URL must be whitelisted in the Firebase Console.
+                        url = "https://learn-firebase-4368c.firebaseapp.com"
+                        // This must be true
+                        handleCodeInApp = true
+                        dynamicLinkDomain = "firebaseloginemail.page.link"
+                        setAndroidPackageName(
+                            "tung.lab.firebaseloginemail",
+                            true, /* installIfNotAvailable */
+                            "23" /* minimumVersion */
+                        )
+                    }
+                    user!!.sendEmailVerification(actionCodeSettings)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                showToast("send")
+                            }
+                        }
                     //updateUI(user)
                     val sqlDB = DBHelper(this@SignUp, null)
                     sqlDB.addUser(null,null,null,null,null)
                     Toast.makeText(baseContext, "Sign up successful", Toast.LENGTH_SHORT).show()
-                    intentToActivity(this@SignUp, SignIn::class.java)
+                    val intent = Intent(this@SignUp, VerifyEmailActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
                     finish()
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", it.exception)

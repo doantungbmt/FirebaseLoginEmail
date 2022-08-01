@@ -13,22 +13,19 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
-import tung.lab.firebaseloginemail.R
 import tung.lab.firebaseloginemail.ScanDevice
 
 import tung.lab.firebaseloginemail.base.BaseActivity
 import tung.lab.firebaseloginemail.databinding.ActivityMainBinding
 import tung.lab.firebaseloginemail.db.DBHelper
-import kotlin.math.log
 
 class SignIn : BaseActivity() {
 
 
-
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var sharedPreferences : SharedPreferences
-    private lateinit var editor : SharedPreferences.Editor
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var spEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +44,10 @@ class SignIn : BaseActivity() {
             ) {
                 Toast.makeText(this@SignIn, "Nhap du thong tin", Toast.LENGTH_SHORT).show()
             } else {
-                signIn(binding.edtEmail.text.trim().toString(), binding.edtPassWord.text.trim().toString())
+                signIn(
+                    binding.edtEmail.text.trim().toString(),
+                    binding.edtPassWord.text.trim().toString()
+                )
             }
         }
 
@@ -55,13 +55,7 @@ class SignIn : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            intent = Intent(this@SignIn, ScanDevice::class.java)
-            startActivity(intent)
-            Toast.makeText(this@SignIn, "Say Hi!", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+
     }
 
     private fun signIn(email: String, password: String) {
@@ -74,12 +68,17 @@ class SignIn : BaseActivity() {
 //                    val user = auth.currentUser
                     val uidLogin = Firebase.auth.currentUser?.uid
                     getUserInfo(uidLogin)
-                    Toast.makeText(this@SignIn, "Sign In successful", Toast.LENGTH_SHORT)
-                        .show()
-                    intent = Intent(this@SignIn, ScanDevice::class.java)
-                    startActivity(intent)
-                    Toast.makeText(this@SignIn, "Say Hi!", Toast.LENGTH_SHORT).show()
-                    finish()
+                    val emailVerified = Firebase.auth.currentUser?.isEmailVerified
+                    if (emailVerified == false) {
+                        intentToActivity(this@SignIn, VerifyEmailActivity::class.java)
+                    } else {
+                        Toast.makeText(this@SignIn, "Sign In successful", Toast.LENGTH_SHORT)
+                            .show()
+                        intent = Intent(this@SignIn, ScanDevice::class.java)
+                        startActivity(intent)
+                        Toast.makeText(this@SignIn, "Say Hi!", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
 
 //                    updateUI(user)
                 } else {
@@ -99,37 +98,51 @@ class SignIn : BaseActivity() {
 
     }
 
+    private fun getUserProfile() {
+        // [START get_user_profile]
+        user?.let {
+            // Check if user's email is verified
+            val emailVerified = user.isEmailVerified
+
+        }
+        // [END get_user_profile]
+    }
+
     private fun rememberMe() {
         sharedPreferences = getSharedPreferences("my_sf", MODE_PRIVATE)
-        editor = sharedPreferences.edit()
+        spEditor = sharedPreferences.edit()
 
-        if(sharedPreferences.contains("checked") && sharedPreferences.getBoolean("checked",false) == true) {
+        if (sharedPreferences.contains("checked") && sharedPreferences.getBoolean(
+                "checked",
+                false
+            ) == true
+        ) {
             binding.cbRememberMe.setChecked(true);
-        }else {
+        } else {
             binding.cbRememberMe.setChecked(false);
 
         }
         binding.cbRememberMe.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b ->
             if (binding.cbRememberMe.isChecked()) {
-                editor.putBoolean("checked", true)
-                editor.apply()
+                spEditor.putBoolean("checked", true)
+                spEditor.apply()
             } else {
-                editor.putBoolean("checked", false)
-                editor.apply()
+                spEditor.putBoolean("checked", false)
+                spEditor.apply()
             }
         })
     }
 
     override fun onPause() {
         super.onPause()
-        if (binding.cbRememberMe.isChecked){
-            editor.apply {
+        if (binding.cbRememberMe.isChecked) {
+            spEditor.apply {
                 putString("email", binding.edtEmail.text.trim().toString())
                 putString("password", binding.edtPassWord.text.trim().toString())
                 commit()
             }
         } else {
-            editor.apply {
+            spEditor.apply {
                 putString("email", "")
                 putString("password", "")
                 commit()
@@ -139,10 +152,9 @@ class SignIn : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.edtEmail.setText(sharedPreferences.getString("email",null))
-        binding.edtPassWord.setText(sharedPreferences.getString("password",null))
+        binding.edtEmail.setText(sharedPreferences.getString("email", null))
+        binding.edtPassWord.setText(sharedPreferences.getString("password", null))
     }
-
 
 
     private fun askPermission() {
@@ -160,24 +172,31 @@ class SignIn : BaseActivity() {
             }
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             TedPermission.create()
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
                 .setPermissions(
-                    Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT,
-                    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_ADVERTISE)
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.BLUETOOTH_ADVERTISE
+                )
                 .check();
         } else {
             TedPermission.create()
                 .setPermissionListener(permissionlistener)
                 .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
-                .setPermissions(Manifest.permission.BLUETOOTH, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .setPermissions(
+                    Manifest.permission.BLUETOOTH,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
                 .check();
         }
 
     }
-    private fun getUserInfo(uidLogin : String?) {
+
+    private fun getUserInfo(uidLogin: String?) {
         val docRef = uidLogin?.let { db.collection("users").document(it) }
         if (docRef != null) {
             docRef.get()
@@ -185,9 +204,13 @@ class SignIn : BaseActivity() {
                     if (document != null) {
                         binding.apply {
                             val sqlDB = DBHelper(this@SignIn, null)
-                            sqlDB.addUser(document.getString("name"),document.getLong("gender")?.toInt(),
-                                document.getLong("height")?.toInt(),document.getLong("weight")?.toInt(),
-                                document.getString("birthday"))
+                            sqlDB.addUser(
+                                document.getString("name"),
+                                document.getLong("gender")?.toInt(),
+                                document.getLong("height")?.toInt(),
+                                document.getLong("weight")?.toInt(),
+                                document.getString("birthday")
+                            )
                         }
 
                     } else {

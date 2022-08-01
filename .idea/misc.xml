@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/bg_button_confirm_personal_info_selector.xml" value="0.221" />
+        <entry key="app/src/main/res/drawable/bg_splashscreen.xml" value="0.218" />
         <entry key="app/src/main/res/drawable/ic_female.xml" value="0.221" />
         <entry key="app/src/main/res/drawable/ic_female_selected.xml" value="0.221" />
         <entry key="app/src/main/res/drawable/ic_female_unselect.xml" value="0.221" />
